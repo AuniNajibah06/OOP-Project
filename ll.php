@@ -55,7 +55,33 @@ if ($result->num_rows > 0) {
     echo "Error: " . $e->getMessage();
     echo "No records found";
 }
-$conn->close();
+
+$sql3 = "SELECT AssetID, Date_Received, Date_Register, Category,Location, StaffID, Manufacturer_Series";
+$result = $conn2->query($sql3);
+
+if ($result->num_rows > 0) {
+    echo "<table border = '1' cellpadding='5' cellspacing='0'>";
+    echo "<tr><th>AssetID</th><th>Date_Received</th><th>Date_Register</th><th>Category</th><th>Location</th>
+    <th>StaffID</th><th>Manufacturer_Series</th></tr>";
+    // Output data of each row 
+    while ($row = $result->fetch_assoc()){
+        echo "<tr>";
+        echo "<td>" . $row['AssetID'] . "</td>";
+        echo "<td>" . $row['Date_Received'] . "</td>";
+        echo "<td>" . $row['Date_Register'] . "</td>";
+        echo "<td>" . $row['Category'] . "</td>";
+        echo "<td>" . $row['Location'] . "</td>";
+        echo "<td>" . $row['StaffID'] . "</td>";
+        echo "<td>" . $row['Manufacturer_Series'] . "</td>";
+        echo "</tr>";
+    }
+    echo "</table>";
+} else {
+    //echo "Error in query: " . $conn2->error;
+    echo "Error: " . $e->getMessage();
+    echo "No records found";
+}
+$conn2->close();
 
 // Close connection
 // pg_close($conn2);
