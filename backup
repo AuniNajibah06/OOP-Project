@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# XAMPP MySQL Configuration
+XAMPP_PATH="/opt/lampp"
+MYSQLDUMP="$XAMPP_PATH/bin/mysqldump"  # Path to mysqldump in XAMPP
+USER="root"                            # MySQL username
+PASSWORD=""                            # MySQL password (if any)
+DATABASE="fcms"          # Replace with your database name
+
+# Backup Directory
+BACKUP_DIR="/backupMariaDB/backups"      # Directory to store backups
+DATE=$(date +%F-%H-%M-%S)              # Current date for backup file name
+BACKUP_FILE="$BACKUP_DIR/$DATABASE-$DATE.sql"  # Full backup file path
+LOG_FILE="$BACKUP_DIR/backup.log"      # Backup log file
+
+# Ensure the backup directory exists
+mkdir -p $BACKUP_DIR
+
+# Perform the backup
+if $MYSQLDUMP -u $USER -p$PASSWORD $DATABASE > $BACKUP_FILE; then
+    echo "[$(date '+%F %T')] Backup successful: $BACKUP_FILE" >> $LOG_FILE
+else
+    echo "[$(date '+%F %T')] Backup failed for database: $DATABASE" >> $LOG_FILE
+    exit 1
+fi
+
+# Optional: Remove backups older than 7 days
+find $BACKUP_DIR -type f -name "*.sql" -mtime +7 -exec rm {} \;
+if [ $? -eq 0 ]; then
+    echo "[$(date '+%F %T')] Removed backups older than 7 days in $BACKUP_DIR" >> $LOG_FILE
+else
+    echo "[$(date '+%F %T')] Error removing old backups in $BACKUP_DIR" >> $LOG_FILE
+fi
+
+echo "Backup process completed."
+
